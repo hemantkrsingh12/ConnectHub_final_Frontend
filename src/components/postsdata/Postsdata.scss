@@ -1,0 +1,54 @@
+.post {
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  margin-top: 7px;
+  .modal {
+    position: relative;
+    .modals-content {
+      position: absolute;
+      right: 0;
+      cursor: pointer;
+      background-color: white;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 2px;
+      p {
+        color: black !important;
+       
+        
+      }
+    }
+  }
+  .heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .three-dot {
+      cursor: pointer;
+    }
+    .innerhead {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+  }
+  .content {
+    height: 400px;
+    img {
+      height: 100%;
+      width: 100%;
+    }
+  }
+  .footer {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    #liked {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

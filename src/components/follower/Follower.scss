@@ -1,0 +1,10 @@
+.follower {
+  padding: 5px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  cursor: pointer;
+  h5 {
+    color: var(--accent-color);
+  }
+}

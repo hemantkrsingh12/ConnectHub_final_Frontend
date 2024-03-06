@@ -1,0 +1,30 @@
+.navbar {
+  height: 70px;
+  .container {
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 5px;
+
+    .left-side {
+      display: flex;
+      align-items: center;
+      margin-inline: auto;
+      gap: 10px;
+      .iconimg {
+        height: 40px;
+      }
+    }
+    .right-side {
+      display: flex;
+      align-items: center;
+      margin-inline: auto;
+      gap: 10px;
+      .userimg {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+      }
+    }
+  }
+}

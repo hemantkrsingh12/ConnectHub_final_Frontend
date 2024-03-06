@@ -1,0 +1,22 @@
+.feed {
+  .container {
+    display: flex;
+    width:61%;
+    margin-inline:auto;
+    gap:10px;
+    
+    
+    .left-side {
+        flex:2;
+    }
+    .right-side {
+        flex:1;
+      border: 1px solid var(--border-color);
+      margin-top: 5px;
+      height: fit-content;
+      .heading{
+        padding: 5px ;
+      }
+    }
+  }
+}
