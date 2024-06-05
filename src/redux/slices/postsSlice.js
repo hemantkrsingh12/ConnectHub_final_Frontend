@@ -48,7 +48,7 @@ const userinfoSlice = createSlice({
       .addCase(likeandunlike.fulfilled, (state, action) => {
         const data = action.payload;
 
-        const index = state?.userprofile?.posts.findIndex(
+        const index = state?.userprofile?.posts?.findIndex(
           (item) => item._id === data._id
         );
         console.log("index is ", index);

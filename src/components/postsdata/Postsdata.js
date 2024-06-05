@@ -1,61 +1,109 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "../avatar/Avatar";
-import postimg from "../../asset/pexels-nathan-tran-16776159.jpg";
-import { FaHeart } from "react-icons/fa";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import "./Postsdata.scss";
-import { useDispatch } from "react-redux";
-import { getuserProfile, likeandunlike } from "../../redux/slices/postsSlice";
+import { useDispatch,useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { AiOutlineHeart } from "react-icons/ai";
-const Postsdata = ({ data, id }) => {
+import { getuserProfile, likeandunlike } from "../../redux/slices/postsSlice";
+import { Card, CardHeader, CardMedia, CardContent, CardActions, IconButton, Typography, Menu, MenuItem } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import "./Postsdata.scss";
+import axios from "axios";
+import { axiosClient } from "../../Utiles/axiosClient";
+
+const Postsdata = ({ data }) => {
   const dispatch = useDispatch();
   const params = useParams();
-  const userid = params?.userid;
-  const [showModal, setShowModal] = useState(false);
-  const navigate=useNavigate();
-  const handlelike = () => {
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const[show,setShow] = useState(false);
+  const datas = useSelector((state) => state.loadingreducer.datainfo);
+
+
+  useEffect(() => {
+  
+    if (data?.owner?._id === datas?._id) {
+      setShow(true);
+    }
+  });
+
+  const handleLike = () => {
     const postid = data?._id;
     dispatch(likeandunlike({ postid }));
   };
 
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = async() => {
+    setAnchorEl(null);
+  };
+  const deletePost=async()=>{
+    const postid = data?._id;
+    const response = await axiosClient.post("/post/deletepost", {
+      postid
+      
+    });
+    window.location.reload();
+    setAnchorEl(null);
+  }
+
   return (
-    <div className="post">
-      <div className="heading" onClick={()=>navigate(`/profile/${data?.owner?._id}`)}>
-       <div className="innerhead">
-       <Avatar imgavt={data?.owner?.avatar?.url} />
-        <h4>{data?.owner?.name}</h4>
-       </div>
-        <BsThreeDotsVertical className="three-dot" onClick={()=>setShowModal(!showModal)}/>
-        
-      </div>
-      {showModal && (
-        <div className="modal">
-          <div className="modals-content">
-            <p  style={{marginBottom:"4px"}}>Edit Post</p>
-            <hr />
-           <p style={{marginTop:"4px"}}>Delete Post</p>
-          </div>
-        </div>
-      )}
-      <div className="content">
-        <img src={data?.image?.url} alt="" />
-      </div>
-      <div className="footer">
-        <span id="liked" onClick={handlelike}  className='hover-link'>
-          {data?.isliked ? (
-            <FaHeart size={30} color="red" />
-          ) : (
-            <AiOutlineHeart size={30} />
-          )}
-          <h4>{data?.likecount} likes</h4>
-        </span>
-        <br />
-       
-      </div>
-      <p>{data?.caption}</p>
-      <p>{data?.timeAgo}</p>
-    </div>
+    <Card className="post" sx={{ marginBottom: 2 }}>
+      <CardHeader
+        avatar={
+          <Avatar imgavt={data?.owner?.avatar?.url} />
+        }
+        action={
+          <IconButton onClick={handleMenuOpen}>
+          {
+            show && (
+              <MoreVertIcon />
+            )
+          }
+          </IconButton>
+        }
+        title={data?.owner?.name}
+        onClick={() => navigate(`/profile/${data?.owner?._id}`)}
+        sx={{ cursor: 'pointer' }}
+      />
+      {
+        show &&(
+          <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleMenuClose}>Edit Post</MenuItem>
+        <MenuItem onClick={deletePost}>Delete Post</MenuItem>
+      </Menu>
+        )
+      }
+      <CardMedia
+        component="img"
+        image={data?.image?.url}
+        alt="Post image"
+        sx={{ height: 400, objectFit: 'cover' }}
+      />
+      <CardContent>
+        <Typography variant="body2" color="textSecondary" component="p">
+          {data?.caption}
+        </Typography>
+        <Typography variant="body2" color="textSecondary" component="p">
+          {data?.timeAgo}
+        </Typography>
+      </CardContent>
+      <CardActions disableSpacing>
+        <IconButton onClick={handleLike}>
+          {data?.isliked ? <FavoriteIcon sx={{ color: 'red' }} /> : <FavoriteBorderIcon sx={{ color: 'grey' }} />}
+        </IconButton>
+        <Typography variant="body2" color="textSecondary">
+          {data?.likecount} likes
+        </Typography>
+      </CardActions>
+    </Card>
   );
 };
 

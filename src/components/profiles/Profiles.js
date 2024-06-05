@@ -7,8 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { axiosClient } from "../../Utiles/axiosClient";
 import { setLoading } from "../../redux/slices/Appconfigslice";
 import { getuserProfile } from "../../redux/slices/postsSlice";
-import Follower from "../follower/Follower";
 import { followunfollow } from "../../redux/slices/FeedSlice";
+import { Avatar, Button, Container, Grid, Paper, TextField, Typography } from "@mui/material";
+
 const Profiles = () => {
   const [show, setShow] = useState(false);
   const [check, setCheck] = useState(false);
@@ -21,16 +22,13 @@ const Profiles = () => {
   const params = useParams();
   const data = useSelector((state) => state.loadingreducer.datainfo);
   const profiledata = useSelector((state) => state.userprofile.userprofile);
-  console.log("profiledata", allProfiledata);
-  console.log("Userdata", data._id);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // allProfiledata.unshift(params.userid)
     const isFollower = allProfiledata?.follower?.find(item => item === data._id);
-    setCheck(!!isFollower); 
+    setCheck(!!isFollower);
   }, [allProfiledata?.follower, data._id]);
-  
- 
+
   const handleimg = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
@@ -38,7 +36,6 @@ const Profiles = () => {
     filereader.onload = () => {
       if (filereader.readyState === FileReader.DONE) {
         setPostimg(filereader.result);
-        console.log("Updated postimg: ", filereader.result);
       }
     };
 
@@ -46,6 +43,7 @@ const Profiles = () => {
       filereader.readAsDataURL(file);
     }
   };
+
   const handlePost = async (e) => {
     e.preventDefault();
     dispatch(setLoading(true));
@@ -55,15 +53,14 @@ const Profiles = () => {
     });
     dispatch(setLoading(false));
     dispatch(getuserProfile({ userid }));
-    setPostimg(" ");
-    setCaption(" ");
+    setPostimg("");
+    setCaption("");
   };
-  const handlefollow = () => {
-    console.log("follow");
-     dispatch(followunfollow({ idtofollow: allProfiledata._id}));
 
+  const handlefollow = () => {
+    dispatch(followunfollow({ idtofollow: allProfiledata._id }));
   };
-  // profile User
+
   const userid = params?.userid;
 
   useEffect(() => {
@@ -78,95 +75,92 @@ const Profiles = () => {
       setShow(true);
     }
   });
-  const navigate = useNavigate();
-  return (
-    <div className="profile">
-      <div className="container">
-        <div className="left-side">
-         {
-          show &&(
-            <>
-             <h4>Create Post</h4>
-          <div className="box">
-            <input
-              type="text"
-              placeholder="Write caption here"
-              onChange={(e) => {
-                setCaption(e.target.value);
-              }}
-            />
-            <div className="content">
-              {postimg && <img src={postimg} alt="" srcset="" />}
-            </div>
-            <div className="footer">
-              <label htmlFor="postupload" className="btn-primary hover-link">
-                <span> Upload Image</span>
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  id="postupload"
-                  onChange={handleimg}
-                />
-              </label>
 
-              <button className="btn-primary hover-link" onClick={handlePost}>
-                Submit
-              </button>
-            </div>
-          </div>
-            </>
-          )
-         }
+  return (
+    <Container component="div" className="profile" sx={{ marginTop: 10 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={8} className="left-side">
+          {show && (
+            <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
+              <Typography variant="h6">Create Post</Typography>
+              <TextField
+                type="text"
+                label="Write caption here"
+                variant="outlined"
+                fullWidth
+                sx={{ mt: 2, mb: 2 }}
+                onChange={(e) => setCaption(e.target.value)}
+              />
+              <div className="content">
+                {postimg && <img src={postimg} alt="Post" style={{ maxWidth: '100%' }} />}
+              </div>
+              <div className="footer">
+                <Button variant="contained" component="label" sx={{ backgroundColor: 'aqua', color: 'black' }}>
+                  Upload Image
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleimg}
+                  />
+                </Button>
+                <Button variant="contained" sx={{ backgroundColor: 'aqua', color: 'black' }} onClick={handlePost}>
+                  Submit
+                </Button>
+              </div>
+            </Paper>
+          )}
           {allProfiledata?.posts?.map((item, id) => {
             return <Postsdata data={item} id={id} key={id} />;
           })}
-        </div>
-        <div className="right-side">
-          <div className="profile-card">
-            <img
-              src={
-                allProfiledata?.avatar?.url
-                  ? allProfiledata?.avatar?.url
-                  : mendp
-              }
-              alt=""
-            />
-            <p className="username">{allProfiledata?.name}</p>
-            <p className="bio">{allProfiledata?.bio}</p>
-            <div className="followenum">
-              <h4>
-                {allProfiledata?.follower?.length} <br /> Follower
-              </h4>
-              <h4>
-                {allProfiledata?.following?.length} <br /> Following
-              </h4>
+        </Grid>
+        <Grid item xs={12} md={4} sx={{ position: 'sticky', top: 0, height: 'fit-content' }}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <div className="profile-card">
+              <Avatar
+                src={allProfiledata?.avatar?.url ? allProfiledata?.avatar?.url : mendp}
+                alt="User Avatar"
+                sx={{ width: 100, height: 100, mb: 2 }}
+              />
+              <Typography variant="h6" className="username">{allProfiledata?.name}</Typography>
+              <Typography variant="body1" className="bio">{allProfiledata?.bio}</Typography>
+              <div className="followenum" style={{ display: 'flex', justifyContent: 'space-around', marginTop: '10px' }}>
+                <div>
+                  <Typography variant="h6">{allProfiledata?.follower?.length}</Typography>
+                  <Typography variant="body2">Followers</Typography>
+                </div>
+                <div>
+                  <Typography variant="h6">{allProfiledata?.following?.length}</Typography>
+                  <Typography variant="body2" >Following</Typography>
+                </div>
+              </div>
+              {!show && (
+                <Button
+                  variant={check ? "contained" : "outlined"}
+                  color={check ? "primary" : "secondary"}
+                  onClick={handlefollow}
+                  fullWidth
+                  sx={{ mt: 2 }}
+                >
+                  {check ? "Following" : "Follow"}
+                </Button>
+              )}
+              {show && (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => navigate("/updateprofile")}
+                  fullWidth
+                  sx={{ mt: 2 }}
+                >
+                  Edit Profile
+                </Button>
+              )}
             </div>
-           {
-            !show &&(
-              <div onClick={handlefollow}> 
-           {check ? (
-              <button className="btn-secondary hover-link">Following</button>
-            ) : (
-              <button className="btn-primary hover-link">Follow</button>
-            )}
-           </div>
-            )
-           }
-            {show && (
-              <button
-                className="btn-secondary hover-link btn-pad"
-                onClick={() => {
-                  navigate("/updateprofile");
-                }}
-              >
-                Edit Profile
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 

@@ -1,18 +1,27 @@
 import React, { useState } from "react";
-import "./Login.scss";
-import { Link,useNavigate } from "react-router-dom";
+import {
+  TextField,
+  Button,
+  Typography,
+  Container,
+  Box,
+  Grid,
+  Paper,
+} from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 import { axiosClient } from "../../Utiles/axiosClient";
-import { setItem,KEY_ACCESS_TOKEN} from "../../Utiles/localStorage";
+import { setItem, KEY_ACCESS_TOKEN } from "../../Utiles/localStorage";
 import { useDispatch } from "react-redux";
 import { setToast } from "../../redux/slices/Appconfigslice";
 import { TOAST_SUCCESS } from "../../App";
-
+import "./Login.scss"; // If you need to keep custom styles
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-const navigate= useNavigate();
-const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   async function handlesubmit(e) {
     e.preventDefault();
     try {
@@ -27,42 +36,68 @@ const dispatch = useDispatch();
         })
       );
       setItem(KEY_ACCESS_TOKEN, response.result.accessToken);
-      navigate("/")
+      navigate("/");
     } catch (error) {
       console.log("Error:", error);
     }
   }
-  
+
   return (
-    <div className="login_cont">
-      <div className="login_box">
-        <h2 className="heading">Login</h2>
-        <form onSubmit={handlesubmit}>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-          />
-
-          <label htmlFor="Password">Password</label>
-          <input
-            type="password"
-            id="password"
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
-
-          <input type="submit" id="submit" />
-        </form>
-        <p className="subheading">
-        Do not have an account? <Link to="/signup">Signup</Link>
-        </p>
-      </div>
-    </div>
+    <Container component="main" maxWidth="xs">
+      <Paper elevation={6} sx={{ padding: 4, mt: 8 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h4" component="h2" gutterBottom>
+            Login
+          </Typography>
+          <Box component="form" onSubmit={handlesubmit} sx={{ mt: 1 }}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              // color="primary"
+              sx={{ mt: 3, mb: 2,backgroundColor:"aqua" }}
+            >
+              Log In
+            </Button>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Typography variant="body2">
+                  Don't have an account? <Link to="/signup">Sign up</Link>
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 

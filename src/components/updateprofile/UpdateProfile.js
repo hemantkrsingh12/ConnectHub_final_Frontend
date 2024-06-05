@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Updateprofile.scss";
 import userimg from "../../asset/user-image-with-black-background.png";
+import { Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setToast, updateinfo } from "../../redux/slices/Appconfigslice";
 import { axiosClient } from "../../Utiles/axiosClient";
@@ -12,15 +13,15 @@ const UpdateProfile = () => {
   const [img, setImg] = useState("");
   const [bio, setBio] = useState("");
   const [name, setName] = useState("");
-  const [showModal, setShowModal] = useState(false); // State to manage modal visibility
+  const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const data = useSelector((state) => state.loadingreducer.datainfo);
   const navigate = useNavigate();
 
   useEffect(() => {
     setImg(data?.avatar?.url);
-    setBio(data?.bio || " ");
-    setName(data?.name || " ");
+    setBio(data?.bio || "");
+    setName(data?.name || "");
   }, [data]);
 
   const handleImage = (e) => {
@@ -30,7 +31,6 @@ const UpdateProfile = () => {
     fileReader.onload = () => {
       if (fileReader.readyState === FileReader.DONE) {
         setImg(fileReader.result);
-        console.log("Base64 encoded image:", fileReader.result);
       }
     };
 
@@ -42,10 +42,11 @@ const UpdateProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(updateinfo({ img, name, bio }));
+    navigate('/')
   };
 
   const handleDeleteConfirmation = async () => {
-    setShowModal(false); // Close the modal
+    setShowModal(false);
     const response = await axiosClient.delete("/user/deleteprofile");
     dispatch(
       setToast({
@@ -55,11 +56,10 @@ const UpdateProfile = () => {
     );
     removeItem(KEY_ACCESS_TOKEN);
     navigate("/login");
-    console.log("Clicked on the model");
   };
 
   return (
-    <div className="updateprofile">
+    <Container component="div" className="updateprofile" sx={{ marginTop: 20 }}>
       <div className="container">
         <div className="imguser">
           <label htmlFor="avatar">
@@ -76,54 +76,73 @@ const UpdateProfile = () => {
 
         <div className="forms">
           <form onSubmit={handleSubmit}>
-            <input
+            <TextField
               type="text"
-              placeholder="Your name"
+              label="Your name"
+              variant="outlined"
               value={name}
-              id="name"
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-            />{" "}
-            <br />
-            <input
-              type="text"
-              value={bio}
-              placeholder="Your Bio"
-              id="bio"
-              onChange={(e) => {
-                setBio(e.target.value);
-              }}
+              onChange={(e) => setName(e.target.value)}
+              fullWidth
+              sx={{ mb: 2 }}
             />
-            <button
-              className="btn-primary sub-btn hover-link"
+            <TextField
+              type="text"
+              label="Your Bio"
+              variant="outlined"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              fullWidth
+              sx={{ mb: 2 }}
+            />
+            <Button
+              variant="contained"
               onClick={handleSubmit}
+              fullWidth
+              sx={{ mb: 2, backgroundColor: 'aqua', color: 'black' }}
             >
               Submit
-            </button>
+            </Button>
           </form>
 
-          <button
-            className="btn-primary del-btn hover-link"
+          <Button
+            variant="contained"
+            color="error"
             onClick={() => setShowModal(true)}
+            fullWidth
           >
             Delete Profile
-          </button>
+          </Button>
         </div>
       </div>
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Confirmation</h2>
-            <p>Are you sure you want to delete your account?</p>
-            <div className="modal-buttons">
-              <button onClick={handleDeleteConfirmation} className="yes">Yes</button>
-              <button onClick={() => setShowModal(false)}>No</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+
+      <Dialog
+        open={showModal}
+        onClose={() => setShowModal(false)}
+      >
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete your account?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeleteConfirmation}
+          >
+            Yes
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setShowModal(false)}
+          >
+            No
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Container>
   );
 };
 

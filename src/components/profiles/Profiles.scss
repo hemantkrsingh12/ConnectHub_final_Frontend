@@ -1,62 +1,38 @@
 .profile {
-  .container {
-    display: flex;
-    width: 61vw;
-    margin-inline: auto;
-    gap: 10px;
-  }
-  .left-side {
-    flex: 2;
-    .box {
-      input {
-        width: 100%;
-        height: 30px;
-        border-radius: 4px;
-        padding: 7px;
-        border: none;
-       margin:15px 0px;
-      }
-      .content{
-        img{
-          width: 100%;
-          max-height: 250px;
-          object-fit:contain;
-        }
-      }
-      .footer{
-        display: flex;
-        justify-content: space-between;
-        align-content: center;
-      }
-    }
-  }
-  .right-side {
-    flex: 1;
-    margin-top: 5px;
-    border: 1px solid var(--border-color);
-    height: fit-content;
-    padding: 5px;
+  // height: 100vh; /* Ensure the profile component takes the full viewport height */
+  display: flex;
+  flex-direction: column;
 
-    .profile-card {
-      text-align: center;
-      img {
-        height: 80px;
-        width: 80px;
-        border-radius: 50%;
-      }
-      .followenum {
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        margin: 10px 0;
-      }
-      .btn-pad {
-        margin: 10px 0px;
-      }
-     .bio{
-      font-size: 20px;
-      color: teal;
-     }
+  .left-side {
+    height: calc(100vh - 80px); /* Adjust this value if needed to account for margins/paddings */
+    overflow-y: auto;
+    padding-right: 10px; /* Provide some space for hidden scrollbar */
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+  }
+
+  .left-side::-webkit-scrollbar {
+    width: 0; 
+  }
+
+  .profile-card {
+    text-align: center;
+    .followenum {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 10px;
     }
+  }
+
+  .content {
+    img {
+      max-width: 100%;
+    }
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
   }
 }
